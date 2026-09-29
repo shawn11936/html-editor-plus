@@ -1,0 +1,9 @@
+{
+  "id": "html-editor-plus",
+  "name": "HTML Editor Plus",
+  "version": "1.1.0",
+  "minAppVersion": "1.0.0",
+  "description": "HTML 查看 + 可视化编辑（基于 HTML Viewer Plus 改造）：嵌入预览、全屏、暗色同步、MHTML、热刷新、就地编辑文字与图片并保存。",
+  "author": "lzq（原版）+ 本地改造",
+  "isDesktopOnly": true
+}
