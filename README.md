@@ -1,98 +1,101 @@
 # HTML Editor Plus
 
-> 本插件是 **[HTML Viewer Plus](https://github.com/kuaile1407/html-viewer-plus)** 的**修改版（增强版）**，原版作者 **lzq**。
-> 本仓库保留原版全部功能，并在其上新增可视化编辑与表格拖拽调宽能力，以与原版相同的 **GPL-3.0** 许可证发布。
+**English** | [简体中文](README_zh.md)
 
-## 归属与许可（请先读这一段）
+> A **modified (enhanced) version** of **[HTML Viewer Plus](https://github.com/kuaile1407/html-viewer-plus)** by **lzq**.
+> This repository keeps every feature of the original plugin and adds in-place visual editing and table column/row resizing, released under the same **GPL-3.0** license.
 
-| 项目 | 内容 |
-|------|------|
-| 原版插件 | HTML Viewer Plus 1.0.1 |
-| 原作者 | **lzq**（GitHub: [kuaile1407](https://github.com/kuaile1407)） |
-| 原仓库 | <https://github.com/kuaile1407/html-viewer-plus> |
-| 本仓库 | <https://github.com/shawn11936/html-editor-plus>（插件 ID：`html-editor-plus`） |
-| 许可证 | GPL-3.0（全文见 [LICENSE](LICENSE)），与原版一致 |
-| 本版修改日期 | 2026-09-22、2026-09-28 |
+## Attribution & License
 
-本仓库的代码由原版代码**修改而来**。依据 GPL-3.0 第 5 条，在此明确声明：本作品是对原版的修改版，修改日期如上表所列，修改内容见下一节。你可以自由使用、修改、再分发本插件，但必须满足：
+| Item | Value |
+|------|-------|
+| Original plugin | HTML Viewer Plus 1.0.1 |
+| Original author | **lzq** (GitHub: [kuaile1407](https://github.com/kuaile1407)) |
+| Original repository | <https://github.com/kuaile1407/html-viewer-plus> |
+| This repository | <https://github.com/shawn11936/html-editor-plus> (plugin ID: `html-editor-plus`) |
+| License | GPL-3.0 — full text in [LICENSE](LICENSE), same as the original |
+| Modified | 2026-09-29 |
 
-1. 保留本文件中的原作者、原仓库与许可证声明；
-2. 你的衍生作品同样以 **GPL-3.0** 发布；
-3. 明确标注作品已被修改及修改日期。
+This work is a **modified version of the original**, as required by section 5 of the GNU GPL v3. The modification and its date are stated above. You are free to use, modify and redistribute this plugin, provided that:
 
-原版版权归 **lzq** 所有，本版新增部分按同一许可证授权。
+1. the original author, original repository and license statements above are preserved;
+2. your derivative work is released under **GPL-3.0** as well;
+3. you clearly mark the work as modified and give the date.
 
-## 相对原版的改动
+Copyright of the original work remains with **lzq**; additions in this version are offered under the same license.
 
-代码统计（`main.js`）：原版 1367 行 → 本版 2564 行，diff 新增 1219 行、修改 21 行。
+## Changes from the original
 
-### 2026-09-22 · 可视化编辑
+Code size (`main.js`): 1367 lines upstream → 2603 lines here (diff: +1260 / −23).
 
-- 底部工具栏新增「编辑」按钮，进入 / 退出可视化编辑态。
-- 就地编辑：文字，图片（换图、调宽、删除），插入链接与分隔线，字号 ±1px，加粗 / 倾斜 / 下划线，文字颜色（含系统吸管取色），左中右对齐，行内代码，引用块。
-- `Cmd/Ctrl + S` 保存：把 DOM 序列化后回写原 `.html`；首次保存前自动把旧文件备份到 `99·归档驿站/_编辑备份/`。
-- 退出编辑时若已有改动，弹 Obsidian 原生对话框询问 Save / Cancel；选 Cancel 会从磁盘重新加载，还原全部修改。
-- 底栏按钮由字符图标改为 SVG 图标，全屏视图精简为「刷新 / 暗色切换 / 编辑」。
-- 手动暗色 ↔ 日间切换（仅当前文件生效，不写回文件）；打开文件时按 Obsidian 当前主题给默认明暗模式。
+### Visual editing
 
-### 2026-09-28 · 表格分隔线拖拽调宽 / 调高
+- An **Edit** button in the bottom toolbar toggles an in-place editing mode.
+- Edit in place: text; images (replace, resize, delete); insert links and horizontal rules; font size ±1px; bold / italic / underline; text colour with the system eyedropper; left / centre / right alignment; inline code; blockquotes.
+- `Cmd/Ctrl + S` serialises the DOM and writes it back to the original `.html`. Before the first save the previous file is backed up to `99·归档驿站/_编辑备份/`.
+- Leaving edit mode with unsaved changes opens a native Obsidian dialog offering **Save** / **Cancel**; *Cancel* reloads from disk and reverts every change.
+- Bottom toolbar buttons switched from text glyphs to SVG icons; the fullscreen view keeps only *Refresh / Dark toggle / Edit*.
+- Manual dark ↔ light toggle that affects only the current file (never written to it); the default mode follows Obsidian's theme when the file opens.
 
-- 编辑态下，鼠标移到表格**内部**的分隔线上：光标变为 `col-resize` / `row-resize`，该线淡紫高亮。
-- 按住左右拖动改列宽，上下拖动改行高；单元格内的文字随宽度自动换行重排。
-- 改动写入单元格行内 `width` / `height`，随保存流程一起写回文件。
-- 命中区样式只在编辑态注入 iframe 的 `<head>`，退出编辑即移除：**纯悬停不会被记成"已编辑"**，辅助样式也不会写进 `.html`。
-- 拖动视为编辑，退出时照常询问是否保存。
+### Table column & row resizing
 
-已知限制：
+- In edit mode, hover an **interior** border of a table: the cursor becomes `col-resize` / `row-resize` and the border is highlighted.
+- Drag horizontally to change column widths, vertically to change row heights; cell text re-wraps with the width.
+- The change is stored as inline `width` / `height` on the cells and persists through the normal save flow.
+- The hit zones are injected into the iframe `<head>` only while editing and removed on exit, so **hovering never marks the document as edited**, and no helper CSS is ever written to the file.
+- Dragging counts as an edit, so you still get the save prompt on exit.
 
-- 只能拖表格**内部**的分隔线，最外侧四条边不响应（否则会把整表撑出容器）。
-- 行高不能压到内容高度以下，列宽受单元格最小内容宽度约束（如 `white-space: nowrap` 的列不会窄于文字本身）。
-- 拖动产生的尺寸变化不在 `Cmd+Z` 撤销栈内，可用「不保存」或重新打开文件还原。
+Known limits:
 
-### 沿用的原版能力（未改动）
+- Only interior borders respond; the four outer edges of a table are ignored (otherwise the table would be pushed out of its container).
+- A row cannot be shrunk below its content height, and a column cannot be narrower than its minimum content width (e.g. a `white-space: nowrap` cell stays as wide as its text).
+- Size changes from dragging are not part of the `Cmd+Z` undo stack; use *Cancel* or reopen the file to revert.
 
-- 嵌入预览 `![[file.html]]`、元素定位 `![[file.html#elementId]]`、自定义尺寸 `![[file.html|600x400]]`
-- 全屏、外部浏览器打开、`Ctrl + 滚轮` 缩放、`Ctrl+F` 页内搜索
-- 暗色主题同步（含自定义 CSS）、文件热刷新
-- MHTML（`.mht` / `.mhtml`）直接打开
-- 右键复制嵌入 / 链接语法，滚动保护（点击激活）
+### Features inherited from the original (unchanged)
 
-## 安装
+- Embed preview `![[file.html]]`, element targeting `![[file.html#elementId]]`, custom sizing `![[file.html|600x400]]`
+- Fullscreen, open in external browser, `Ctrl + wheel` zoom, `Ctrl+F` in-page search
+- Dark theme sync (with custom CSS), hot refresh on file change
+- MHTML (`.mht` / `.mhtml`) support
+- Right-click to copy embed / link syntax, scroll guard
 
-本插件**未上架** Obsidian 社区插件市场，只能手动或通过 BRAT 安装。
+## Installation
 
-### 手动安装
+This plugin is **not** listed on the Obsidian community market; install it manually or with BRAT.
 
-1. 从本仓库下载 `main.js`、`manifest.json`、`styles.css`
-2. 在你的仓库里创建 `.obsidian/plugins/html-editor-plus/`
-3. 把三个文件放进去
-4. 重启 Obsidian，进入 设置 → 第三方插件，启用 **HTML Editor Plus**
+### Manual
 
-### BRAT 安装
+1. Download `main.js`, `manifest.json`, `styles.css` from this repository.
+2. Create `.obsidian/plugins/html-editor-plus/` in your vault.
+3. Copy the three files into that directory.
+4. Restart Obsidian, open Settings → Community plugins, and enable **HTML Editor Plus**.
 
-1. 安装 [BRAT](https://github.com/TfTHacker/obsidian42-brat) 插件
-2. BRAT 设置 → Add Beta Plugin → 输入 `shawn11936/html-editor-plus`
-3. 启用插件
+### BRAT
 
-## 使用
+1. Install the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin.
+2. BRAT settings → **Add Beta Plugin** → enter `shawn11936/html-editor-plus`.
+3. Enable the plugin.
 
-- **打开 HTML**：文件浏览器里点击 `.html`，或在笔记中 `![[xxx.html]]` 嵌入。
-- **编辑**：点底栏「编辑」按钮 → 直接改动内容 → `Cmd/Ctrl + S` 保存；`Esc` 或左上角红点退出（有未保存改动会先询问）。
-- **调表格**：编辑态下把鼠标移到表格内部的列线 / 行线上，出现拖拽光标后按住拖动。
-- **备份**：每次保存都会把保存前的版本留在 `99·归档驿站/_编辑备份/`。
+## Usage
 
-## 仓库文件说明
+- **Open an HTML file**: click it in the file explorer, or embed it in a note with `![[xxx.html]]`.
+- **Edit**: click *Edit* in the bottom toolbar → change the content → `Cmd/Ctrl + S` to save; `Esc` or the red dot closes the editor and asks what to do with unsaved changes.
+- **Resize tables**: in edit mode hover an interior table border, then press and drag.
+- **Backups**: every save leaves the previous version in `99·归档驿站/_编辑备份/`.
 
-| 文件 | 作用 |
-|------|------|
-| `main.js` | 插件主逻辑（在原版基础上修改） |
-| `styles.css` | 视图与编辑器样式 |
-| `manifest.json` | Obsidian 插件清单 |
-| `LICENSE` | GPL-3.0 许可证全文（与原版一致，未改动） |
-| `README.md` | 本文件 |
+## Repository contents
 
-`debug.log` 是本地运行日志，已由 `.gitignore` 排除，不会入库。
+| File | Purpose |
+|------|---------|
+| `main.js` | Plugin logic (modified from the original) |
+| `styles.css` | View and editor styles |
+| `manifest.json` | Obsidian plugin manifest |
+| `LICENSE` | Full GPL-3.0 text — identical to the original, unmodified |
+| `README.md` | This file (English) |
+| `README_zh.md` | 简体中文文档 |
 
-## 致谢
+`debug.log` is a local runtime log; it is excluded by `.gitignore` and never committed.
 
-- 原版 **HTML Viewer Plus** by **lzq** — <https://github.com/kuaile1407/html-viewer-plus>，本插件的一切基础。
+## Credits
+
+- **HTML Viewer Plus** by **lzq** — <https://github.com/kuaile1407/html-viewer-plus>, the foundation of everything in this repository.

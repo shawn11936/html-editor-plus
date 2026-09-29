@@ -432,7 +432,7 @@
     color: var(--text-on-accent);
 }
 
-/* ---- 编辑器关闭确认框（2026-09-22）---- */
+/* ---- 编辑器关闭确认框 ---- */
 .modal:has(.hvp-confirm-title) {
     width: 300px !important;
     max-width: 300px !important;

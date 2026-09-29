@@ -1,30 +1,47 @@
 /*
+ * HTML Editor Plus — a modified (enhanced) version of HTML Viewer Plus
  * HTML Editor Plus —— HTML Viewer Plus 的修改版（增强版）
  *
- * 原版 Original work:
- *   HTML Viewer Plus by lzq
+ * Original work by lzq:
+ *   HTML Viewer Plus
  *   https://github.com/kuaile1407/html-viewer-plus
+ * 原版作者 lzq，原仓库同上。
  *
- * 本作品是对上述原版的修改版（GPL-3.0 第 5 条要求的修改声明）：
- *   修改日期：2026-09-22、2026-09-28
- *   修改内容：可视化编辑（就地编辑文字 / 图片并保存回写原 .html）、
- *             底栏 SVG 图标与手动暗色 / 日间切换、表格分隔线拖拽调宽 / 调高。
- *             完整清单见 README.md。
+ * This work is a modified version of the original (notice required by GPL-3.0 section 5).
+ * 本作品为上述原版的修改版（GPL-3.0 第 5 条要求的修改声明）。
  *
- * Copyright (C) 2026 lzq（原版 HTML Viewer Plus）与 shawn11936（本修改版）
+ *   Modified / 修改日期：2026-09-29
+ *   Changes / 修改内容：
+ *     - in-place visual editing (text / images, saved back to the original .html)
+ *       可视化编辑：就地编辑文字 / 图片并保存回写原 .html
+ *     - SVG toolbar icons with manual dark / light toggle
+ *       底栏 SVG 图标与手动暗色 / 日间切换
+ *     - table column & row resizing by dragging cell borders
+ *       表格分隔线拖拽调宽 / 调高
+ *   Full list: README.md (English) / README_zh.md (中文)
+ *   完整清单见 README.md（英文）/ README_zh.md（中文）
  *
- * 本程序是自由软件：你可以在自由软件基金会发布的 GNU 通用公共许可证
- * 第 3 版（或由你选择的任何更新版本）的条款下重新发布它和 / 或修改它。
+ * Copyright (C) 2026 lzq (original HTML Viewer Plus) and shawn11936 (this modified version)
+ * Copyright (C) 2026 lzq（原版）与 shawn11936（本修改版）
  *
- * 本程序的发布是希望它有用，但不附带任何担保；甚至没有适销性或
- * 特定用途适用性的默示担保。详见 GNU 通用公共许可证（LICENSE 文件）。
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ * 本程序是自由软件：你可以在自由软件基金会发布的 GNU 通用公共许可证第 3 版
+ * （或由你选择的任何更新版本）的条款下重新发布它和 / 或修改它。
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 本程序的发布是希望它有用，但不附带任何担保；甚至没有适销性或特定用途适用性的
+ * 默示担保。详见 GNU 通用公共许可证（LICENSE 文件）。
  */
 
 const obsidian = require("obsidian");
 const path = require("path");
 
 var _hvpId = 0;
-var _hvpDebug = true; // 2026-09-22 暂时打开，用于排查关闭对话框不弹的问题
+var _hvpDebug = true; // 暂时打开，用于排查关闭对话框不弹的问题
 var _hvpLogPath = null;
 var _hvpLogBuf = [];
 var _hvpLogTimer = null;
@@ -46,7 +63,7 @@ function _hvpLog(msg) {
 	}
 }
 
-// --- 内联 SVG 图标（2026-09-22）：不用字体图标，跨设备一致 ---
+// --- 内联 SVG 图标：不用字体图标，跨设备一致 ---
 function svgIcon(name, size) {
 	var s = size || 16;
 	var d = {
@@ -278,7 +295,7 @@ HtmlRenderer.prototype.render = function() {
 	this.iframe.style.display = "block";
 	if (this.isFullView) {
 		this.iframe.style.height = "100%";
-		// 2026-09-22：全屏视图两边留白
+		// 全屏视图两边留白
 		this.iframe.style.padding = "0 44px 28px";
 		this.iframe.style.boxSizing = "border-box";
 	}
@@ -366,7 +383,7 @@ HtmlRenderer.prototype._attachIframe = function() {
 		if (self.s.syncDarkTheme) self._watchTheme();
 		if (self.s.hotRefresh) self._watchFile();
 		self._applySubpath();
-		// 打开/刷新后按 Obsidian 当前主题给默认模式（2026-09-22）
+		// 打开/刷新后按 Obsidian 当前主题给默认模式
 		try { self._setDefaultMode(); } catch (e) {}
 	};
 	this.iframe.addEventListener("load", this._loadHandler);
@@ -672,7 +689,7 @@ HtmlRenderer.prototype.reload = function() {
 
 HtmlRenderer.prototype._createToolbar = function() {
 	this.toolbar = this.containerEl.createDiv({ cls: "html-viewer-toolbar" });
-	// 2026-09-22：底栏改为 SVG 图标；全屏只留 刷新 / 暗色切换 / 编辑
+	// 底栏改为 SVG 图标；全屏只留 刷新 / 暗色切换 / 编辑
 	var self = this;
 	function iconBtn(icon, title, fn) {
 		var b = makeBtn(self.toolbar, "", title, "html-viewer-toolbar-btn", fn);
@@ -690,7 +707,7 @@ HtmlRenderer.prototype._createToolbar = function() {
 	this.editBtn = iconBtn("edit", "可视化编辑", this._toggleEdit.bind(this));
 };
 
-// --- 可视化编辑（2026-09-22 新增）---
+// --- 可视化编辑 ---
 // 在渲染后的 iframe 上直接编辑文字与图片，保存时回写原 .html，并在文件内留一份原内容备份。
 
 HtmlRenderer.prototype._enterEditMode = function() {
@@ -711,7 +728,7 @@ HtmlRenderer.prototype._enterEditMode = function() {
 	this._obsLogged = false;
 	this._fontSize = 16;
 	this._setupEditBehaviors(doc);
-	this._setupTableResize(doc);   // 2026-09-28：表格分隔线拖拽调宽/调高（仅编辑态）
+	this._setupTableResize(doc);   // 表格分隔线拖拽调宽/调高（仅编辑态）
 	// 进入编辑：挂 DOM 变化监听 —— 任何编辑动作（含改回原样）都能被捕捉
 	try {
 		if (this._editObs) { this._editObs.disconnect(); this._editObs = null; }
@@ -774,7 +791,7 @@ HtmlRenderer.prototype._exitEditMode = function() {
 	}
 	this._editFileInput = null;
 	this._hideImagePanel();
-	this._teardownTableResize();   // 2026-09-28：清掉编辑态注入的表格分隔线命中样式
+	this._teardownTableResize();   // 清掉编辑态注入的表格分隔线命中样式
 	try { if (this._editObs) { this._editObs.disconnect(); this._editObs = null; } } catch (e) {}
 	this._editing = false;
 	// 注意：这里【不】动内容、也不重载 —— 用户选择「不保存」时，
@@ -880,7 +897,7 @@ HtmlRenderer.prototype._setupEditBehaviors = function(doc) {
 		}
 		if (mod && e.key === "s") {
 			e.preventDefault();
-			// 保存后自动退出编辑模式（2026-09-22）
+			// 保存后自动退出编辑模式
 			self._saveEdit();
 			self._exitEdit(true);
 		} else if (e.key === "Escape") {
@@ -890,7 +907,7 @@ HtmlRenderer.prototype._setupEditBehaviors = function(doc) {
 	}, true);
 };
 
-// --- 表格分隔线拖拽调宽 / 调高（2026-09-28 新增，仅可视化编辑态生效）---
+// --- 表格分隔线拖拽调宽 / 调高（仅可视化编辑态生效）---
 // 鼠标移到单元格边缘的分隔线上会出现 col-resize / row-resize 光标（悬停时高亮那条线），
 // 按住拖动即可左右改列宽、上下改行高；改动写在单元格的行内 width / height 上，
 // 文字随列宽自动重排，保存时与其他编辑一起写回 .html。
@@ -1307,9 +1324,9 @@ HtmlRenderer.prototype._showImagePanel = function(img) {
 	this._imgPanel = panel;
 };
 
-// 手动切换当前 HTML 的暗色/日间（2026-09-22）
+// 手动切换当前 HTML 的暗色/日间
 // 内联调色板（不依赖 window.prompt —— Electron 里 prompt 可能被拦截）
-// 打开文件时按 Obsidian 当前主题给默认模式（2026-09-22）
+// 打开文件时按 Obsidian 当前主题给默认模式
 HtmlRenderer.prototype._setDefaultMode = function() {
 	var doc = null;
 	try { doc = this.iframe.contentDocument; } catch (e) { doc = null; }
@@ -1824,7 +1841,7 @@ HtmlRenderer.prototype._setupSearchShortcut = function() {
 			self._toggleSearch();
 			return;
 		}
-		// 缩放快捷键（2026-09-22 新增，替代已移除的缩放按钮）
+		// 缩放快捷键（替代已移除的缩放按钮）
 		if (e.key === "+" || e.key === "=" || e.key === "Add") {
 			e.preventDefault();
 			e.stopPropagation();
@@ -2175,7 +2192,7 @@ HtmlRenderer.prototype.destroy = function() {
 	if (this._fullscreenHandler) { document.removeEventListener("fullscreenchange", this._fullscreenHandler); this._fullscreenHandler = null; }
 	if (this._idPicker) { this._idPicker.remove(); this._idPicker = null; }
 	if (this.searchBar) { this.searchBar.remove(); this.searchBar = null; }
-	// 2026-09-28：表格拖拽挂在宿主 window 上的两个监听
+	// 表格拖拽挂在宿主 window 上的两个监听
 	if (this._tblWinBound) {
 		window.removeEventListener("mousemove", this._tblWinMove, true);
 		window.removeEventListener("mouseup", this._tblWinUp, true);
